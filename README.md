@@ -25,8 +25,8 @@ server_name = "jdbc:sqlserver://<your-server-name>.database.windows.net" #Add <y
 database_name = "AdventureWorks2017"
 url = server_name + ";" + "databaseName=" + database_name + ";"
 
-username = "<your-user-name>" #
-password = "<your-password>" # Add 
+username = "<your-user-name>" # Add <your-user-name>
+password = "<your-password>" # Add <your-password>
 ```
 You can either provide table name or custom query to fetch data from SQL DB. 
 
@@ -59,7 +59,7 @@ jdbcDF = spark.read \
         .option("password", password).load()
 ```
 
-### Data wrangling 
+### Data wrangling and embedd OrderDetails with Order
 
 Define schema for OrderDetails nested JSON column
 

@@ -1,6 +1,6 @@
 # pyspark-azuresql-cosmos
 
-There are two versions of the connector available through Maven, a 2.4.5 compatible version and a 3.0.0 compatible version. Both versions can be found here and can be imported using the coordinates below:
+There are two versions of the connector available for MS SQLServer through Maven, a 2.4.5 compatible version and a 3.0.0 compatible version. The same way MS Azure Cosmos DB connector is also available through Maven. Connectors can be imported using the coordinates below:
 
 
 | Connector | Maven Coordinate |
@@ -8,7 +8,7 @@ There are two versions of the connector available through Maven, a 2.4.5 compati
 |MS SQLServer - Spark 2.4.5 compatible connnector | `com.microsoft.azure:spark-mssql-connector:1.0.1` |
 |MS Azure Cosmos DB - Spark 2.4.5 compatible connnector | `com.microsoft.azure:azure-cosmosdb-spark_2.4.0_2.11:3.6.13` |
 
-Connected needs to be added to cluster (Azure Databricks):
+Connectors needs to be added to cluster (Azure Databricks):
 
 Open cluster --> Liberaries --> Install New --> Maven (Liberary Source) --> Coordinates
 

@@ -88,27 +88,42 @@ writeToCosmosDF = jdbcDF.select(
   F.from_json(F.col("OrderDetails"), orderDetailsSchema).alias("OrderDetails")
 )
 ```
-### Loading dataframe to Cosmos DB
+### Loading dataframe to CosmosDB
 
 ```
 #Cosmos DB Connection Parameters
 
-URI = "https://<your-cosmos-server-name>.documents.azure.com:443/" Add #<your-cosmos-server-name>
-PrimaryKey = "" #Add PrimaryKey for authorization
-CosmosDatabase = "<your-cosmos-db-name." # Add <your-cosmos-db-name>
-CosmosCollection = "<your-container-name>" #Add <your-container-name>
-writeConfig = {
-  "Endpoint": URI,
-  "Masterkey": PrimaryKey,
-  "Database": CosmosDatabase,
-  "Collection": CosmosCollection,
-  "writingBatchSize":"1000",
-  "Upsert": "true"
+cosmosEndpoint = "https://<your-cosmos-server-name>.documents.azure.com:443/" #Add <your-cosmos-server-name>
+cosmosMasterKey = "" #Add PrimaryKey for authorization
+cosmosDatabaseName = "AnalyticsStore"
+cosmosContainerName = "OrderDetailEmbedd"
+
+cfg = {
+  "spark.cosmos.accountEndpoint" : cosmosEndpoint,
+  "spark.cosmos.accountKey" : cosmosMasterKey,
+  "spark.cosmos.database" : cosmosDatabaseName,
+  "spark.cosmos.container" : cosmosContainerName,
 }
+
 ```
+
+Configure Catalog API
+```
+# Configure Catalog Api to be used
+spark.conf.set("spark.sql.catalog.cosmosCatalog", "com.azure.cosmos.spark.CosmosCatalog")
+spark.conf.set("spark.sql.catalog.cosmosCatalog.spark.cosmos.accountEndpoint", cosmosEndpoint)
+spark.conf.set("spark.sql.catalog.cosmosCatalog.spark.cosmos.accountKey", cosmosMasterKey)
+
+# create a cosmos database using catalog api
+spark.sql("CREATE DATABASE IF NOT EXISTS cosmosCatalog.{};".format(cosmosDatabaseName))
+
+# create a cosmos container using catalog api
+spark.sql("CREATE TABLE IF NOT EXISTS cosmosCatalog.{}.{} using cosmos.oltp TBLPROPERTIES(partitionKeyPath = '/id', manualThroughput = '1100')".format(cosmosDatabaseName, cosmosContainerName))
+```
+
 Write spark dataframe to Cosmos DB container
 ```
-#Cosmos DB 
+#Write to CosmosDB 
 (writeToCosmosDF.write
   .mode("overwrite")
   .format("com.microsoft.azure.cosmosdb.spark")

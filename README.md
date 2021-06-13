@@ -37,18 +37,21 @@ You can either provide table name or custom query to fetch data from SQL DB.
 
 table_name = """
 (
-	SELECT  so.SalesOrderId AS id
-	       ,so.CustomerId AS CustomerId
-	       ,so.OrderDate AS OrderDate
-	       ,(
-	SELECT  sod.SalesOrderDetailId AS SalesOrderDetailId
-	       ,sod.Sku AS Sku
-	       ,sod.Name AS Name
-	       ,sod.Price AS Price
-	       ,sod.Quantity AS Quantity
-	FROM SalesOrderDetail sod
-	WHERE so.SalesOrderId = sod.SalesOrderId for json auto) AS OrderDetails 
-	FROM SalesOrder so
+SELECT  so.SalesOrderId AS id 
+       ,so.CustomerId   AS CustomerId 
+       ,so.OrderDate    AS OrderDate 
+       ,ShipDate        AS ShipDate 
+       ,(
+SELECT  sod.SalesOrderDetailId AS SalesOrderDetailId 
+       ,p.ProductNumber        AS Sku 
+       ,P.Name                 AS Name 
+       ,sod.UnitPrice          AS Price 
+       ,sod.OrderQty           AS Quantity
+FROM Sales.SalesOrderDetail sod
+INNER JOIN Production.Product p
+ON p.ProductID = sod.ProductID
+WHERE so.SalesOrderId = sod.SalesOrderId for json auto) AS OrderDetails 
+FROM Sales.SalesOrderHeader so
 ) AS query"""
 ```
 

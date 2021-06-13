@@ -1,6 +1,6 @@
 # pyspark-azuresql-cosmos
 
-Throughout this quick tutorial we rely on Azure Databricks Runtime 8.3 (includes Apache Spark 3.1.1, Scala 2.12).
+Throughout this article we rely on Azure Databricks Runtime 8.3 (includes Apache Spark 3.1.1, Scala 2.12).
 
 We would require connectors for Both Azure SQL and CosmosDB in order to connect these database from Azure Databricks. Following connectors needs to be installed through Maven. Connectors can be imported using the coordinates below:
 

@@ -1,5 +1,59 @@
 # Azure CosmosDB : Data Modeling and Migration
+
+Azure Cosmos DB is a schema-free databases and this feature makes Cosmos DB highly preferable to store and query unstructured and semi-structured data, but it requires deep understanding about application data model to get the most of the service in terms of performance and scalability and lowest cost.
+
+Before desgining the data modeling we need to understand:
+
+* How is data going to be stored?
+* Data access pattern. How is application going to retrieve and query data?
+* Is application read-heavy, or write-heavy?
+
+## Denormalization vs Normalization
+
+When we start modeling data in Azure Cosmos DB we need to treat entities as self-contained items represented as JSON documents.
+
+For comparison, let's first see how we might model data in a relational database. The following example shows how an Order might be stored in a relational database.
+
+![OrderERDinRDBMS](https://github.com/shan-sharma/pyspark-azuresql-cosmos/blob/main/images-in-readme/OrderDetailERD.jpg)
+
+
+When working with relational databases, the strategy is to normalize all your data. Normalizing your data typically involves taking an entity, such as an order, and breaking it down into discrete components. In the example above, an order can have multiple items detail records (within order), as well their associated product records. 
+
+The guiding premise when normalizing data is to avoid storing redundant data on each record and rather refer to data. In this example, to read an order, with all their order items details and product information, It is required to use JOINS to effectively compose back (or denormalize) your data at run time.
+
+Now let's go through a sample order which has 2 items in OrderDetails and product description of those items from Product table.
+
+![NormalizedOrderData](https://github.com/shan-sharma/pyspark-azuresql-cosmos/blob/main/images-in-readme/RelationalTable.JPG)
+
+Modifying an Order with their items details and shipment/ delivery information will require write operations across many individual tables.
+
+Now let's take a look at how we would model the same data as a self-contained entity in Azure Cosmos DB.
+
+![OrderEmbeddCosmos](https://github.com/shan-sharma/pyspark-azuresql-cosmos/blob/main/images-in-readme/CosmosDBOrderDetailEmbed.JPG)
+
+Using the approach above we have denormalized the ordert record, by embedding all the information related to this order, such as their order item details and products, into a single JSON document. In addition, because we're not confined to a fixed schema we have the flexibility to do things like having order items details of different shapes entirely.
+
+Retrieving a complete order record from the database is now a single read operation against a single container and for a single item. Updating a order record, with their order item details and products, is also a single write operation against a single item.
+
+By denormalizing data, the application may need to issue fewer queries and updates to complete common operations.
+
+## Embedding
+
+When to embed
+In general, use embedded data models when:
+
+* There are contained relationships between entities.
+* There are one-to-one or one-to-few relationships between entities.
+  * Embedding order details with order would be a good practise as there would be limited number of items in an order.
+  * Embedding order with customer would NOT be a good practise as there is no limit on number of orders a customer can place.
+* There is embedded data that changes infrequently.
+* There is embedded data that will not grow without bound.
+* There is embedded data that is queried frequently together.
+
+
 # pyspark-azuresql-cosmos
+## Quick Demo
+Let's have a quick demo of what we discussed recently.
 
 Throughout this article we rely on Azure Databricks Runtime 8.3 (includes Apache Spark 3.1.1, Scala 2.12).
 
